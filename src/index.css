@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #333333;
+  --color-secondary: #868789;
+  --color-tertiary: #EFEFEF;
+  --color-accent: #01569D;
+}
+
+@layer base {
+  body {
+    @apply select-none antialiased text-primary select-none;
+  }
+}
