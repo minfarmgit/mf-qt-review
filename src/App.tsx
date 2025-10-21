@@ -5,7 +5,7 @@ import YandexMapsIcon from '@/assets/yandex-maps.svg?react'
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
 import { useQueryState } from "@/shared/hooks/useQueryState.ts";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import type { FormEvent } from "react";
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
   const onSubmitSad = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setCurrentText('');
-    toast("Успешно отправлено!");
+    setCurrentStage('finished');
   }
 
   return (
@@ -26,14 +26,15 @@ function App() {
       <div className="min-h-dvh w-screen flex flex-col">
         <div className="flex flex-none flex-col gap-2 p-4 h-[130px]">
           <LogoIcon className="w-[120px] flex-none" />
-          { currentStage != '2' && <span className="font-medium text-xl">Как вы оцениваете посещение <br/> Аптеки №{code}?</span> }
+          { currentStage != '2' && currentStage != 'finished' && <span className="font-medium text-xl">Как вы оцениваете посещение <br/> Аптеки №{code}?</span> }
           { currentStage == '2' && currentRate != null && Number(currentRate) > 3 && <span className="font-medium text-xl">Спасибо за <br/> хорошую оценку!</span> }
           { currentStage == '2' && currentRate != null && Number(currentRate) <= 3 && <span className="font-medium text-xl">Нам очень жаль, что Вы получили негативный опыт!</span> }
+          { currentStage == 'finished' && currentRate != null && <span className="font-medium text-xl">Ваш отзыв успешно <br/> отправлен</span> }
         </div>
         <div className="flex-none w-full flex items-center bg-tertiary h-1">
-          <div className={clsx('h-full bg-accent', ['2', '3'].includes(currentStage || '') ? 'w-full' : 'w-1/3')}></div>
+          <div className={clsx('h-full bg-accent', ['2', '3', 'finished'].includes(currentStage || '') ? 'w-full' : 'w-1/3')}></div>
         </div>
-        { currentStage != '2' && (
+        { currentStage != '2' && currentStage != 'finished' && (
           <div className="flex flex-1 flex-col items-center justify-center p-4">
             <div className="flex flex-col justify-center gap-2">
               <span className="text-secondary font-light text-sm">Нажмите на звёздочку, чтобы поставить оценку</span>
@@ -88,6 +89,11 @@ function App() {
               </div>
               <button type="submit" className="px-6 py-3 bg-accent text-white rounded-xl w-full flex items-center justify-center font-medium active:opacity-90">Подтвердить</button>
             </form>
+          </div>
+        ) }
+        { currentStage == 'finished' && (
+          <div className="flex flex-1 flex-col items-center justify-center p-4 text-lg gap-6">
+            <span className="text-xl font-medium text-accent">Благодарим за ваш отзыв!</span>
           </div>
         ) }
       </div>
