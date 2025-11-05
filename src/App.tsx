@@ -54,7 +54,7 @@ function App() {
     )
   }
 
-  if (!!code && alreadyReviewed && currentStage != 'finished' && currentStage != '2') {
+  if (!!code && alreadyReviewed && currentStage == '2' && currentRate != null && Number(currentRate) <= 3) {
     return (
       <div className="min-h-dvh w-screen flex flex-col items-center justify-center">
         <span className="font-medium text-xl text-center">Вы уже оставляли отзыв<br/>на аптеку №{currentApt.code}</span>
