@@ -9,6 +9,7 @@ import SadStage from "@/components/SadStage.tsx";
 import GoodStage from "@/components/GoodStage.tsx";
 import { sendReview } from "@/api/sendReview.ts";
 import { APT_DATA, type AptItem } from "@/shared/constants/apt.ts";
+import { useReviewTracker } from "@/shared/hooks/useReviewChecker.ts";
 
 function App() {
   const { code } = useParams<{ code: string }>()
@@ -19,6 +20,8 @@ function App() {
   const [currentText, setCurrentText] = useQueryState<string>('text', false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [successStatus, setSuccessStatus] = useQueryState<string>('success', false)
+  const { hasReviewed, markReviewed } = useReviewTracker()
+  const alreadyReviewed = hasReviewed(code || '');
 
   const onSubmitSad = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +38,7 @@ function App() {
     setCurrentStage('finished');
     setIsLoading(false);
     if (status >= 200 && status < 300) {
+      markReviewed(code || '');
       setSuccessStatus('true', true);
     } else {
       setSuccessStatus(null, true);
@@ -45,7 +49,15 @@ function App() {
   if (!code || !currentApt) {
     return (
       <div className="min-h-dvh w-screen flex flex-col items-center justify-center">
-        <span className="font-medium text-xl">Аптека не найдена</span>
+        <span className="font-medium text-xl text-center">Аптека не найдена</span>
+      </div>
+    )
+  }
+
+  if (!!code && alreadyReviewed && currentStage != 'finished' && currentStage != '2') {
+    return (
+      <div className="min-h-dvh w-screen flex flex-col items-center justify-center">
+        <span className="font-medium text-xl text-center">Вы уже оставляли отзыв<br/>на аптеку №{currentApt.code}</span>
       </div>
     )
   }
